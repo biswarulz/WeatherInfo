@@ -13,6 +13,11 @@ protocol WeatherListDisplayLogic: AnyObject {
     func displayServerError()
 }
 
+protocol WeatherListViewControllerDelegate: AnyObject {
+    
+    func didSelectCell(_ data: WeatherListInfo)
+}
+
 class WeatherListViewController: UIViewController {
 
     lazy var sceneView: WeatherListVIew = {
@@ -22,6 +27,7 @@ class WeatherListViewController: UIViewController {
     
     var weatherListViewModel: WeatherListBusinessLogic?
     let weatherListDataSource: WeatherListDataSource?
+    weak var delegate: WeatherListViewControllerDelegate?
     
     init(weatherListDataSource: WeatherListDataSource) {
         
@@ -94,6 +100,12 @@ extension WeatherListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 
         return 120.0
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        let selectedData = weatherListViewModel?.getSelectedWeatherInfo(forRow: indexPath.row) ?? WeatherListInfo()
+        delegate?.didSelectCell(selectedData)
     }
 }
 

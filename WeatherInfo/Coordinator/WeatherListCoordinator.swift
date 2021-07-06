@@ -26,6 +26,7 @@ class WeatherListCoordinator: Coordinator<Void> {
         
         let service: WeatherListService = WeatherListServiceClient()
         let viewModel = WeatherListViewModel(weatherService: service)
+        viewController.delegate = self
         viewModel.viewController = viewController
         viewController.weatherListViewModel = viewModel
     }
@@ -48,5 +49,15 @@ class WeatherListCoordinator: Coordinator<Void> {
         navBarAppearance.backgroundColor = #colorLiteral(red: 0.05882352963, green: 0.180392161, blue: 0.2470588237, alpha: 1)
         navigationController.navigationBar.standardAppearance = navBarAppearance
         navigationController.navigationBar.scrollEdgeAppearance = navBarAppearance
+    }
+}
+
+extension WeatherListCoordinator: WeatherListViewControllerDelegate {
+    
+    func didSelectCell(_ data: WeatherListInfo) {
+        
+        let detailCoordinator = WeatherDetailCoordinator(navigationController: navigationController, detailData: data)
+        addChildCoordinator(detailCoordinator)
+        detailCoordinator.start()
     }
 }

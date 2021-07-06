@@ -29,7 +29,7 @@ struct WeatherListInfo: Decodable {
         weather = try container.decodeIfPresent([Weather].self, forKey: .weather) ?? []
     }
     
-    init(city: City, main: Main, weather: [Weather]) {
+    init(city: City = City(), main: Main = Main(), weather: [Weather] = []) {
         
         self.city = city
         self.main = main
@@ -43,6 +43,7 @@ struct City: Decodable {
     let name: String
     let findName: String
     let country: String
+    let coordinates: Coordinate
     
     enum CodingKeys: String, CodingKey {
         
@@ -50,6 +51,7 @@ struct City: Decodable {
         case name
         case findName = "findname"
         case country = "country"
+        case coordinates = "coord"
     }
     
     init(from decoder: Decoder) throws {
@@ -60,14 +62,42 @@ struct City: Decodable {
         name = try container.decodeIfPresent(String.self, forKey: .name) ?? ""
         findName = try container.decodeIfPresent(String.self, forKey: .findName) ?? ""
         country = try container.decodeIfPresent(String.self, forKey: .country) ?? ""
+        coordinates = try container.decodeIfPresent(Coordinate.self, forKey: .coordinates) ?? Coordinate()
     }
     
-    init(cityId: Int = 0, name: String = "", findName: String = "", country: String = "") {
+    init(cityId: Int = 0, name: String = "", findName: String = "", country: String = "", coordinates: Coordinate = Coordinate()) {
         
         self.cityId = cityId
         self.name = name
         self.findName = findName
         self.country = country
+        self.coordinates = coordinates
+    }
+}
+
+struct Coordinate: Decodable {
+    
+    let latitude: Float
+    let longitude: Float
+    
+    enum CodingKeys: String, CodingKey {
+        
+        case latitude = "lat"
+        case longitude = "lon"
+    }
+    
+    init(from decoder: Decoder) throws {
+        
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        latitude = try container.decodeIfPresent(Float.self, forKey: .latitude) ?? 0.0
+        longitude = try container.decodeIfPresent(Float.self, forKey: .longitude) ?? 0.0
+    }
+    
+    init(latitude: Float = 0.0, longitude: Float = 0.0) {
+        
+        self.latitude = latitude
+        self.longitude = longitude
     }
 }
 
@@ -147,4 +177,15 @@ struct WeatherListCellViewData {
     let maxTemp: String
     let currentWeather: String
     let weatherType: WeatherType
+}
+
+struct WeatherDetailViewData {
+    
+    let locationName: String
+    let temperature: String
+    let minTemp: String
+    let maxTemp: String
+    let currentWeather: String
+    let weatherType: WeatherType
+    let coordinates: Coordinate
 }

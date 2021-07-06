@@ -11,6 +11,7 @@ protocol WeatherListBusinessLogic: AnyObject {
     
     func fetchWeatherList()
     func fetchSearchedWeatherList(forCity name: String)
+    func getSelectedWeatherInfo(forRow row: Int) -> WeatherListInfo
 }
 
 class WeatherListViewModel {
@@ -52,6 +53,11 @@ extension WeatherListViewModel: WeatherListBusinessLogic {
         
         let filteredList = weatherList.filter({ $0.city.name.lowercased().contains(name) })
         presentWeatherListData(filteredList)
+    }
+    
+    func getSelectedWeatherInfo(forRow row: Int) -> WeatherListInfo {
+        
+        return weatherList[row]
     }
     
 }
